@@ -43,6 +43,9 @@ public enum StopAnimationStyle {
         }
     }
     
+    /// the color during screen transition the button
+    @IBInspectable open var trantisionBackgroundColor: UIColor? = nil
+    
     /// the corner radius value to have a button with rounded corners.
     @IBInspectable open var cornerRadius: CGFloat = 0 {
         didSet {
@@ -59,6 +62,7 @@ public enum StopAnimationStyle {
     
     private var cachedTitle: String?
     private var cachedImage: UIImage?
+    private var cachedBackgroundColor: UIColor?
     
     private let springGoEase:CAMediaTimingFunction  = CAMediaTimingFunction(controlPoints: 0.45, -0.36, 0.44, 0.92)
     private let shrinkCurve:CAMediaTimingFunction   = CAMediaTimingFunction(name: .linear)
@@ -97,6 +101,7 @@ public enum StopAnimationStyle {
         self.isUserInteractionEnabled = false // Disable the user interaction during the animation
         self.cachedTitle            = title(for: .normal)  // cache title before animation of spiner
         self.cachedImage            = image(for: .normal)  // cache image before animation of spiner
+        self.cachedBackgroundColor  = backgroundColor      // cache background color before animation of transition
         
         self.setTitle("",  for: .normal)                    // place an empty string as title to display a spiner
         self.setImage(nil, for: .normal)                    // remove the image, if any, before displaying the spinner
@@ -106,6 +111,11 @@ public enum StopAnimationStyle {
         }, completion: { completed -> Void in
             self.shrink()   // reduce the width to be equal to the height in order to have a circle
             self.spiner.animation() // animate spinner
+            
+            // set the color during screen transition to the button
+            if let trantisionBackgroundColor = self.trantisionBackgroundColor {
+                self.backgroundColor = trantisionBackgroundColor
+            }
         })
     }
     
@@ -218,6 +228,7 @@ public enum StopAnimationStyle {
             DispatchQueue.main.asyncAfter(deadline: .now() + revertDelay) {
                 self.setOriginalState(completion: nil)
                 self.layer.removeAllAnimations() // make sure we remove all animation
+                self.backgroundColor = self.cachedBackgroundColor // restore the button color
             }
         }
         
