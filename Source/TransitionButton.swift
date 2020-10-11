@@ -29,6 +29,9 @@ public enum StopAnimationStyle {
  
 @IBDesignable open class TransitionButton : UIButton, UIViewControllerTransitioningDelegate, CAAnimationDelegate {
     
+    /// a boolean value indicating whether the spinner is in the enabled state.
+    @IBInspectable open var isEnableSpinner: Bool = true
+    
     /// the color of the spinner while animating the button
     @IBInspectable open var spinnerColor: UIColor = UIColor.white {
         didSet {
@@ -105,7 +108,9 @@ public enum StopAnimationStyle {
             self.layer.cornerRadius = self.frame.height / 2 // corner radius should be half the height to have a circle corners
         }, completion: { completed -> Void in
             self.shrink()   // reduce the width to be equal to the height in order to have a circle
-            self.spiner.animation() // animate spinner
+            if self.isEnableSpinner {
+                self.spiner.animation() // animate spinner
+            }
         })
     }
     
